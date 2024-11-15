@@ -149,6 +149,7 @@ use content types as sub-resources inside extensions.
     DeveloperCorner/Index
     Migrations/Index
     KnownProblems/Index
+    FAQ/Index
     Appendix/Index
 
 ..  Meta Menu
