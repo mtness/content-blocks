@@ -10,6 +10,42 @@ The FAQ section aims to address common questions and provide answers to help
 users better understand and utilize the TYPO3 Content Blocks extension. Here,
 you will find solutions to recurring inquiries and guidance on various topics.
 
+Page Types
+==========
+
+..  accordion::
+    :name: accordionExample
+
+    ..  accordion-item:: What are Page Types for and how can I use them?
+        :name: heading5
+        :header-level: 2
+
+        Page Types let you create specialized page variations with common
+        properties that are just perfect for your needs.
+
+        Example use case:
+
+        .. code:: yaml
+
+          name: example/blog
+          typeName: 1582290360
+          fields:
+            - identifier: additional_field
+              type: Text
+
+        Your custom Page Type will be shown inside TYPO3's page section.
+
+        ..  figure:: /Images/FAQ/faq-pagetype-backend.png
+            :alt: Page Types in TYPO3
+            :width: 400px
+            :align: center
+
+        :ref:`Read more about Page Types <yaml_reference_page_types>`.
+
+
+Other common questions
+======================
+
 ..  accordion::
     :name: accordionExample
 
@@ -33,12 +69,6 @@ you will find solutions to recurring inquiries and guidance on various topics.
 
     ..  accordion-item:: Can I share fields between multiple Content Elements?
         :name: heading4
-        :header-level: 2
-
-        Placeholder content for this accordion.
-
-    ..  accordion-item:: What are Page Types for?
-        :name: heading5
         :header-level: 2
 
         Placeholder content for this accordion.
