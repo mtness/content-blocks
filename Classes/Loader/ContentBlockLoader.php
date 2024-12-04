@@ -110,6 +110,10 @@ class ContentBlockLoader
             if (is_dir($recordTypesFolder)) {
                 $loadedContentBlocks[] = $this->loadContentBlocksInExtension($recordTypesFolder, $extensionKey, ContentType::RECORD_TYPE);
             }
+            $fileTypesFolder = $package->getPackagePath() . ContentBlockPathUtility::getRelativeFileTypesPath();
+            if (is_dir($fileTypesFolder)) {
+                $loadedContentBlocks[] = $this->loadContentBlocksInExtension($fileTypesFolder, $extensionKey, ContentType::FILE_TYPE);
+            }
         }
         $loadedContentBlocks = array_merge([], ...$loadedContentBlocks);
         $sortByPriority = fn(LoadedContentBlock $a, LoadedContentBlock $b): int => (int)($b->getYaml()['priority'] ?? 0) <=> (int)($a->getYaml()['priority'] ?? 0);
@@ -146,7 +150,7 @@ class ContentBlockLoader
             $absoluteContentBlockPath = $splFileInfo->getPathname();
             $contentBlockFolderName = $splFileInfo->getRelativePathname();
             $contentBlockExtPath = ContentBlockPathUtility::getContentBlockExtPath($extensionKey, $contentBlockFolderName, $contentType);
-            $configYaml = $this->parseConfigYaml($absoluteContentBlockPath, $contentBlockExtPath, $contentType);
+            $configYaml = $this->parseConfigYaml($absoluteContentBlockPath, $contentType);
             if ($configYaml === null) {
                 continue;
             }
@@ -162,7 +166,7 @@ class ContentBlockLoader
         return $result;
     }
 
-    protected function parseConfigYaml(string $absoluteContentBlockPath, string $contentBlockExtPath, ContentType $contentType): ?array
+    protected function parseConfigYaml(string $absoluteContentBlockPath, ContentType $contentType): ?array
     {
         $contentBlockDefinitionFileName = ContentBlockPathUtility::getContentBlockDefinitionFileName();
         $yamlPath = $absoluteContentBlockPath . '/' . $contentBlockDefinitionFileName;
@@ -212,14 +216,17 @@ class ContentBlockLoader
         if (!file_exists($absolutePath)) {
             throw new \RuntimeException('Content Block "' . $name . '" could not be found in "' . $absolutePath . '".', 1678699637);
         }
-        // Override table and typeField for Content Elements and Page Types.
-        if ($contentType === ContentType::CONTENT_ELEMENT || $contentType === ContentType::PAGE_TYPE) {
+        // Hard override table.
+        if ($contentType->getTable() !== null) {
             $yaml['table'] = $contentType->getTable();
+        }
+        // Hard override type field.
+        if ($contentType->getTypeField() !== null) {
             $yaml['typeField'] = $contentType->getTypeField();
         }
-        // Create typeName
-        $typeName = $yaml['typeName'] ?? UniqueIdentifierCreator::createContentTypeIdentifier($name);
-        $yaml['typeName'] ??= $typeName;
+        // Create typeName, if not set.
+        $yaml['typeName'] ??= UniqueIdentifierCreator::createContentTypeIdentifier($name);
+        $typeName = $yaml['typeName'];
         if (!array_key_exists('table', $yaml)) {
             throw new \RuntimeException('Content Block "' . $name . '" does not define required "table".', 1731412650);
         }
